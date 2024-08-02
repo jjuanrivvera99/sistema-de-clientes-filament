@@ -1,0 +1,58 @@
+models:
+  DocumentType:
+    name: string unique
+
+  Customer:
+    name: string
+    nationality: string nullable
+    residence_place: string nullable
+    postal_code: string nullable
+    approx_enrollment: date nullable
+    marital_status: string nullable
+    family: text nullable
+    document_number: string
+    document_type_id: id foreign:document_types
+    timestamps: true
+    unique: document_type_id, document_number
+
+  Contact:
+    customer_id: id foreign:customers
+    contact_number: string nullable
+    address: text nullable
+    email: string nullable
+    timestamps: true
+
+  Membership:
+    membership_number: string unique
+    membership_date: date nullable
+    membership_status: string nullable
+    customer_id: id foreign:customers
+    wish: text nullable
+    timestamps: true
+
+controllers:
+  Customer:
+    index:
+      query: all
+      render: customers.index with:customers
+    create:
+      render: customers.create
+    store:
+      validate: name, document_number, document_type_id
+      save: customer
+      redirect: customers.index
+    show:
+      find: id
+      render: customers.show with:customer
+    edit:
+      find: id
+      render: customers.edit with:customer
+    update:
+      find: id
+      validate: name, document_number, document_type_id
+      update: customer
+      redirect: customers.index
+    destroy:
+      find: id
+      delete: customer
+      redirect: customers.index
