@@ -33,6 +33,7 @@ class CustomerStoreRequest extends FormRequest
             'contacts.*.contact_number' => ['nullable', 'string', 'max:20'],
             'contacts.*.address' => ['nullable', 'string', 'max:255'],
             'contacts.*.email' => ['nullable', 'email', 'max:255'],
+            'notes' => ['nullable', 'string'],
         ];
     }
 }

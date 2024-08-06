@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,7 +26,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class Customer extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -55,6 +57,17 @@ class Customer extends Model
         'document_type_id' => 'integer',
     ];
 
+    protected static function booted()
+    {
+        static::deleting(function (Customer $customer) {
+            $customer->membership()->update(['membership_status' => 'inactive']);
+        });
+
+        static::restoring(function (Customer $customer) {
+            $customer->membership()->update(['membership_status' => 'active']);
+        });
+    }
+
     public function documentType(): BelongsTo
     {
         return $this->belongsTo(DocumentType::class);
@@ -63,5 +76,10 @@ class Customer extends Model
     public function contacts(): HasMany
     {
         return $this->hasMany(Contact::class);
+    }
+
+    public function membership(): HasOne
+    {
+        return $this->hasOne(Membership::class);
     }
 }

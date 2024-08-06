@@ -26,7 +26,7 @@
         </div>
         <div class="mb-4">
             <label for="cencus" class="block text-gray-700 font-bold mb-2">Empadronamiento Aproximado</label>
-            <input type="date" name="cencus" id="cencus" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <input type="text" name="cencus" id="cencus" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
         </div>
         <div class="mb-4">
             <label for="marital_status" class="block text-gray-700 font-bold mb-2">Estado Civil</label>
@@ -47,6 +47,10 @@
                     <option value="{{ $documentType->id }}">{{ $documentType->name }}</option>
                 @endforeach
             </select>
+        </div>
+        <div class="mb-4">
+            <label for="notes" class="block text-gray-700 font-bold mb-2">Notas</label>
+            <textarea name="notes" id="notes" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
         </div>
         <div id="contacts" class="mb-4">
             <h4 class="text-xl font-semibold mb-2">Contactos</h4>

@@ -4,11 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CustomerController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/admin/login');
 
-Route::redirect('/dashboard', '/customers')->middleware(['auth', 'verified'])->name('dashboard');
+Route::redirect('/dashboard', '/admin')->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
