@@ -15,6 +15,8 @@ class MembershipResource extends Resource
 {
     protected static ?string $model = Membership::class;
 
+    protected static ?string $modelLabel = 'Afiliaciones';
+
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
     
     protected static ?string $navigationLabel = 'Afiliaciones';

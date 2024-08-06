@@ -16,6 +16,8 @@ class TrashedCustomerResource extends Resource
 
     protected static ?string $navigationLabel = 'Papelera';
 
+    protected static ?string $modelLabel = 'Clientes borrados';
+
     protected static ?string $navigationIcon = 'heroicon-o-trash';
 
     public static function form(Form $form): Form

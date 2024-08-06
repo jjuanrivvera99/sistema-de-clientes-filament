@@ -2,16 +2,18 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CustomerResource\Pages;
-use App\Filament\Resources\CustomerResource\RelationManagers;
-use App\Models\Customer;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Customer;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Tables\Actions\ExportAction;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Exports\CustomerExporter;
+use App\Filament\Resources\CustomerResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\CustomerResource\RelationManagers;
 
 class CustomerResource extends Resource
 {
@@ -20,8 +22,6 @@ class CustomerResource extends Resource
     protected static ?string $modelLabel = 'Clientes';
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
-    
-    protected static ?string $navigationLabel = 'Clientes';
 
     public static function form(Form $form): Form
     {
@@ -125,14 +125,14 @@ class CustomerResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')
-                    ->searchable(true),
+                    ->searchable(isIndividual: true),
                 Tables\Columns\TextColumn::make('nationality')
                     ->label('Nacionalidad'),
                 Tables\Columns\TextColumn::make('documentType.name')
                     ->label('Tipo de Documento'),
                 Tables\Columns\TextColumn::make('document_number')
                     ->label('Número de Documento')
-                    ->searchable(true),
+                    ->searchable(isIndividual: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Creado')
                     ->dateTime(),
@@ -140,8 +140,12 @@ class CustomerResource extends Resource
             ->filters([
                 //
             ])
+            ->headerActions([
+                ExportAction::make()->exporter(CustomerExporter::class),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -4,8 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CustomerController;
 
-Route::redirect('/', '/admin/login');
-
+Route::redirect('/', '/admin');
 Route::redirect('/dashboard', '/admin')->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -15,7 +14,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::group(['middleware' => ['auth']], function () {
-    Route::resource('customers', CustomerController::class);
+    // Route::resource('customers', CustomerController::class);
 });
 
 require __DIR__.'/auth.php';
