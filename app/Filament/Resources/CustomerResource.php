@@ -23,6 +23,8 @@ class CustomerResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+    protected static ?int $navigationSort = 1;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -138,7 +140,13 @@ class CustomerResource extends Resource
                     ->dateTime(),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('Afiliaciones Activas')
+                    ->query(function (Builder $query) {
+                        $query->whereHas('membership', function (Builder $query) {
+                            $query->where('membership_status', 'active');
+                        });
+                    })
+                    ->label('Afiliaciones Activas'),
             ])
             ->headerActions([
                 ExportAction::make()->exporter(CustomerExporter::class),

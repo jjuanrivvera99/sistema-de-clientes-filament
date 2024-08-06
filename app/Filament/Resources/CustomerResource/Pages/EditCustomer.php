@@ -15,17 +15,13 @@ class EditCustomer extends EditRecord
     {
         $this->record = $this->getModel()::with('membership')->findOrFail($this->record->id);
 
-        // dd($this->getModel()::with('membership')->findOrFail($this->record->id));
-
-        // dd($this->record);
-
         return $this->record;
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            // Actions\DeleteAction::make(),
+            //
         ];
     }
 }

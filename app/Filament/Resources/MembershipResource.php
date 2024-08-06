@@ -21,6 +21,8 @@ class MembershipResource extends Resource
     
     protected static ?string $navigationLabel = 'Afiliaciones';
 
+    protected static ?int $navigationSort = 4;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -74,6 +76,19 @@ class MembershipResource extends Resource
 
                 Tables\Columns\TextColumn::make('membership_status')
                     ->label('Estado'),
+
+                Tables\Columns\TextColumn::make('membership_status')
+                    ->label('Estado')
+                    ->formatStateUsing(function ($state) {
+                        $state = strtolower($state);
+
+                        return $state === 'active' ? 'Activo' : 'Inactivo';
+                    })
+                    ->badge()
+                    ->colors([
+                        'success' => 'active',
+                        'danger' => 'inactive',
+                    ]),
 
                 Tables\Columns\TextColumn::make('customer.name')
                     ->label('Cliente'),

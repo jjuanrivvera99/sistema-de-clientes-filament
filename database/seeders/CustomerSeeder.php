@@ -25,16 +25,19 @@ class CustomerSeeder extends Seeder
                 'residence_place' => $faker->city,
                 'postal_code' => $faker->postcode,
                 'cencus' => $faker->words(3, true),
-                'marital_status' => $faker->randomElement(['Single', 'Married', 'Divorced']),
+                'marital_status' => $faker->randomElement(['Soltero', 'Casado', 'Divorciado', 'Viudo', 'Unión Libre']),
                 'family' => $faker->text,
                 'document_number' => $faker->unique()->numerify('##########'),
                 'document_type_id' => $faker->randomElement($documentTypes),
                 'notes' => $faker->optional()->text,
+                'created_at' => $faker->dateTimeBetween('-1 year', 'now'),
+                'updated_at' => $faker->dateTimeBetween('-1 year', 'now'),
+                'deleted_at' => $faker->optional(0.05)->dateTimeBetween('-1 year', 'now'),
             ]);
 
             $contacts = [];
 
-            for ($j = 0; $j < $faker->numberBetween(0, 3); $j++) {
+            for ($j = 0; $j < $faker->numberBetween(1, 3); $j++) {
                 $contacts[] = [
                     'contact_number' => $faker->phoneNumber,
                     'address' => $faker->address,
@@ -43,6 +46,15 @@ class CustomerSeeder extends Seeder
             }
 
             $customer->contacts()->createMany($contacts);
+
+            $customer->membership()->create([
+                'membership_number' => $faker->unique()->numerify('##########'),
+                'membership_date' => $faker->dateTimeBetween('-1 year', 'now'),
+                'membership_status' => $faker->randomElement(['active', 'inactive']),
+                'wish' => $faker->optional()->text,
+                'created_at' => $faker->dateTimeBetween('-1 year', 'now'),
+                'updated_at' => $faker->dateTimeBetween('-1 year', 'now'),
+            ]);
         }
     }
 }
