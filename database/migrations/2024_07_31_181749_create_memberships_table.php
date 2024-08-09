@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('membership_number')->unique();
             $table->date('membership_date')->nullable();
             $table->string('membership_status')->nullable();
-            $table->foreignId('customer_id')->constrained();
+            $table->foreignId('customer_id')->constrained()->onDelete('cascade');
             $table->text('wish')->nullable();
             $table->timestamps();
         });
