@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Parallax\FilamentComments\Models\Traits\HasFilamentComments;
 
 /**
  * @property int $id
@@ -26,7 +27,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class Customer extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasFilamentComments;
 
     /**
      * The attributes that are mass assignable.

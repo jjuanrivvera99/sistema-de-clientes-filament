@@ -6,6 +6,7 @@ use Filament\Actions;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\EditRecord;
 use App\Filament\Resources\CustomerResource;
+use Parallax\FilamentComments\Actions\CommentsAction;
 
 class EditCustomer extends EditRecord
 {
@@ -21,7 +22,7 @@ class EditCustomer extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            //
+            CommentsAction::make(),
         ];
     }
 }

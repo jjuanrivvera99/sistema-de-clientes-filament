@@ -103,6 +103,8 @@ class CustomerResource extends Resource
                 Forms\Components\Repeater::make('contacts')
                     ->label('Contactos')
                     ->relationship('contacts')
+                    ->maxItems(3)
+                    ->minItems(1)
                     ->schema([
                         Forms\Components\TextInput::make('contact_number')
                             ->label('Número de Contacto')
@@ -125,6 +127,10 @@ class CustomerResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')
                     ->searchable(isIndividual: true),

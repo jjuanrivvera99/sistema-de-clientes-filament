@@ -7,7 +7,7 @@ models:
     nationality: string nullable
     residence_place: string nullable
     postal_code: string nullable
-    approx_enrollment: date nullable
+    census: date nullable
     marital_status: string nullable
     family: text nullable
     document_number: string
