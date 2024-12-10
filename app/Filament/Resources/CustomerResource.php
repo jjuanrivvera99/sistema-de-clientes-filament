@@ -75,12 +75,10 @@ class CustomerResource extends Resource
                         Forms\Components\TextInput::make('membership_number')
                             ->label('Número de Afiliación')
                             ->maxLength(255)
-                            ->required()
                             ->default(fn ($record) => $record->membership->membership_number ?? ''),
 
                         Forms\Components\DatePicker::make('membership_date')
                             ->label('Fecha de Afiliación')
-                            ->required()
                             ->default(fn ($record) => $record->membership->membership_date ?? null),
 
                         Forms\Components\Select::make('membership_status')
@@ -89,7 +87,6 @@ class CustomerResource extends Resource
                                 'active' => 'Activo',
                                 'inactive' => 'Inactivo',
                             ])
-                            ->required()
                             ->default(fn ($record) => $record->membership->membership_status ?? ''),
 
                         Forms\Components\Textarea::make('wish')
