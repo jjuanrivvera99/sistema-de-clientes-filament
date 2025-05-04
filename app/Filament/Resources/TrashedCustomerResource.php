@@ -22,6 +22,14 @@ class TrashedCustomerResource extends Resource
 
     protected static ?int $navigationSort = 5;
 
+    /**
+     * Overwrite the canCreate method to prevent the creation of new records
+     */
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form

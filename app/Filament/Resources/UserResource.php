@@ -8,18 +8,21 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\Pages\{CreateUser, EditUser};
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\UserResource\Pages\{CreateUser, EditUser};
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
     protected static ?string $modelLabel = 'Usuarios';
+
+    protected static ?string $navigationGroup = 'Configuración';
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
@@ -56,6 +59,20 @@ class UserResource extends Resource
                     ->same('password')
                     ->hidden(fn ($livewire) => $livewire instanceof EditUser),
 
+                Forms\Components\Section::make('Roles')
+                    ->schema([
+                        Forms\Components\Select::make('roles')
+                            ->label('Roles')
+                            ->relationship('roles', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->options(Role::all()->pluck('name', 'id'))
+                            ->searchable()
+                            ->required(),
+                    ])
+                    ->collapsible()
+                    ->collapsed(fn ($livewire) => !$livewire?->record?->exists),
+
                 Forms\Components\Section::make('Reseteo de Contraseña')
                     ->schema([
                         Forms\Components\TextInput::make('new_password')
@@ -82,6 +99,13 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\ImageColumn::make('avatar_url')
+                    ->label('Avatar')
+                    ->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')
                     ->sortable()
@@ -104,6 +128,7 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
+                \STS\FilamentImpersonate\Tables\Actions\Impersonate::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
