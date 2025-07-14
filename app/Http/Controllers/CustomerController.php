@@ -30,18 +30,24 @@ class CustomerController extends Controller
 
     public function store(CustomerStoreRequest $request): RedirectResponse
     {
-        DB::transaction(function () use ($request) {
-            $customer = Customer::create($request->validated());
+        try {
+            DB::transaction(function () use ($request) {
+                $customer = Customer::create($request->validated());
 
-            // Crear contactos si existen
-            if ($request->has('contacts')) {
-                foreach ($request->contacts as $contactData) {
-                    $customer->contacts()->create($contactData);
+                // Crear contactos si existen
+                if ($request->has('contacts')) {
+                    foreach ($request->contacts as $contactData) {
+                        $customer->contacts()->create($contactData);
+                    }
                 }
-            }
-        });
+            });
 
-        return redirect()->route('customers.index')->with('success', 'Cliente creado con éxito.');
+            return redirect()->route('customers.index')->with('success', 'Cliente creado con éxito.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => 'Error al crear el cliente: ' . $e->getMessage()]);
+        }
     }
 
     public function show(Request $request, Customer $customer): View
@@ -58,35 +64,41 @@ class CustomerController extends Controller
 
     public function update(CustomerUpdateRequest $request, Customer $customer): RedirectResponse
     {
-        DB::transaction(function () use ($request, $customer) {
-            $customer->update($request->validated());
+        try {
+            DB::transaction(function () use ($request, $customer) {
+                $customer->update($request->validated());
 
-            // Obtener los IDs de los contactos actuales
-            $currentContactIds = $customer->contacts()->pluck('id')->toArray();
+                // Obtener los IDs de los contactos actuales
+                $currentContactIds = $customer->contacts()->pluck('id')->toArray();
 
-            // IDs de los contactos recibidos en la solicitud
-            $receivedContactIds = array_filter(array_column($request->contacts, 'id'));
+                // IDs de los contactos recibidos en la solicitud
+                $receivedContactIds = array_filter(array_column($request->contacts, 'id'));
 
-            // Eliminar contactos que ya no existen
-            $contactsToDelete = array_diff($currentContactIds, $receivedContactIds);
-            Contact::destroy($contactsToDelete);
+                // Eliminar contactos que ya no existen
+                $contactsToDelete = array_diff($currentContactIds, $receivedContactIds);
+                Contact::destroy($contactsToDelete);
 
-            // Crear o actualizar contactos
-            foreach ($request->contacts as $contactData) {
-                if (isset($contactData['id'])) {
-                    // Actualizar contacto existente
-                    $contact = Contact::find($contactData['id']);
-                    if ($contact) {
-                        $contact->update($contactData);
+                // Crear o actualizar contactos
+                foreach ($request->contacts as $contactData) {
+                    if (isset($contactData['id'])) {
+                        // Actualizar contacto existente
+                        $contact = $customer->contacts()->find($contactData['id']);
+                        if ($contact) {
+                            $contact->update($contactData);
+                        }
+                    } else {
+                        // Crear nuevo contacto
+                        $customer->contacts()->create($contactData);
                     }
-                } else {
-                    // Crear nuevo contacto
-                    $customer->contacts()->create($contactData);
                 }
-            }
-        });
+            });
 
-        return redirect()->route('customers.index')->with('success', 'Cliente actualizado con éxito.');
+            return redirect()->route('customers.index')->with('success', 'Cliente actualizado con éxito.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => 'Error al actualizar el cliente: ' . $e->getMessage()]);
+        }
     }
 
     public function destroy(Request $request, Customer $customer): RedirectResponse

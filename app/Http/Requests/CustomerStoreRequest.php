@@ -24,7 +24,7 @@ class CustomerStoreRequest extends FormRequest
             'nationality' => ['nullable', 'string', 'max:100'],
             'residence_place' => ['nullable', 'string', 'max:255'],
             'postal_code' => ['nullable', 'string', 'max:20'],
-            'approx_enrollment' => ['nullable', 'date'],
+            'cencus' => ['nullable', 'string'],
             'marital_status' => ['nullable', 'string', 'max:50'],
             'family' => ['nullable', 'string'],
             'document_number' => ['required', 'string', 'max:50'],
