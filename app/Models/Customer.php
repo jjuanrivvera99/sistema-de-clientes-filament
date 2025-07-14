@@ -16,7 +16,7 @@ use Parallax\FilamentComments\Models\Traits\HasFilamentComments;
  * @property string $nationality
  * @property string $residence_place
  * @property string $postal_code
- * @property \Carbon\Carbon $approx_enrollment
+ * @property string $cencus
  * @property string $marital_status
  * @property string $family
  * @property string $document_number

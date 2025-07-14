@@ -29,7 +29,7 @@ class MembershipResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('membership_number')
                     ->label('Número de Afiliación')
-                    ->required()
+                    ->nullable()
                     ->maxLength(255),
                 
                 Forms\Components\DatePicker::make('membership_date')
@@ -73,9 +73,6 @@ class MembershipResource extends Resource
                 Tables\Columns\TextColumn::make('membership_date')
                     ->label('Fecha de Afiliación')
                     ->date(),
-
-                Tables\Columns\TextColumn::make('membership_status')
-                    ->label('Estado'),
 
                 Tables\Columns\TextColumn::make('membership_status')
                     ->label('Estado')
