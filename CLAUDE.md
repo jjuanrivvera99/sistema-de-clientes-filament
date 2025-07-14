@@ -78,13 +78,22 @@ php artisan test --testsuite=Unit
 php artisan test --coverage
 ```
 
-### Code Quality
+### Code Quality & Static Analysis
 ```bash
 # Laravel Pint (code formatting)
-./vendor/bin/pint
+./vendor/bin/sail exec laravel.test ./vendor/bin/pint
 
 # Check code formatting without fixing
-./vendor/bin/pint --test
+./vendor/bin/sail exec laravel.test ./vendor/bin/pint --test
+
+# Static Analysis with PHPStan
+./vendor/bin/sail composer analyse
+
+# Static Analysis with cache clearing
+./vendor/bin/sail composer analyse-clear
+
+# Run complete code quality suite
+./vendor/bin/sail exec laravel.test ./vendor/bin/pint --test && ./vendor/bin/sail composer analyse
 ```
 
 ### Blueprint Code Generation
@@ -147,3 +156,50 @@ Tests are organized in `tests/` directory:
 - `database/factories/`: Model factories for testing
 - `database/seeders/`: Database seeders
 - `resources/views/`: Blade templates (auth, customer views)
+
+## Development Best Practices
+
+- Remember to use 'sail' command for any bash operation regarding php, composer or project related.
+
+## 🚨 MANDATORY CODE QUALITY REQUIREMENTS
+
+**ALL CODE CHANGES MUST PASS THE FOLLOWING CHECKS BEFORE BEING COMMITTED OR MERGED:**
+
+### Required Pre-Commit Checks
+1. **Code Style**: `./vendor/bin/sail exec laravel.test ./vendor/bin/pint --test`
+2. **Static Analysis**: `./vendor/bin/sail composer analyse`
+3. **Tests**: `./vendor/bin/sail exec laravel.test php artisan test` *(Currently requires database setup)*
+
+### GitHub Actions Workflow
+The project has automated quality checks in `.github/workflows/code-quality.yml` that run on every push and pull request:
+
+- ✅ Laravel Pint code style verification
+- ✅ PHPStan static analysis (Level 5)
+- ✅ Full test suite with coverage
+- ✅ Security audit
+- ✅ Dependency checks
+
+### For Developers
+Before pushing code or creating a pull request:
+
+```bash
+# Run the complete quality check suite
+./vendor/bin/sail exec laravel.test ./vendor/bin/pint --test
+./vendor/bin/sail composer analyse
+
+# Note: Tests currently require database setup configuration
+# ./vendor/bin/sail exec laravel.test php artisan test
+
+# If any check fails, fix the issues before proceeding
+```
+
+### For Code Reviews
+- Pull requests MUST have all GitHub Actions checks passing
+- Code that doesn't meet these standards will be automatically rejected
+- Use the existing Claude Code Review workflow for additional feedback
+
+### Static Analysis Configuration
+- PHPStan configuration: `phpstan.neon`
+- Analysis level: 5 (strict but practical)
+- Optimized for Laravel + Filament patterns
+- Excludes common false positives while catching real issues

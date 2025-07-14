@@ -31,10 +31,10 @@ class CustomerExporter extends Exporter
 
     public static function getCompletedNotificationBody(Export $export): string
     {
-        $body = 'Tu exportación de clientes se ha completado y ' . number_format($export->successful_rows) . ' ' . str('fila')->plural($export->successful_rows) . ' fueron exportadas.';
+        $body = 'Tu exportación de clientes se ha completado y '.number_format($export->successful_rows).' '.str('fila')->plural($export->successful_rows).' fueron exportadas.';
 
         if ($failedRowsCount = $export->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('fila')->plural($failedRowsCount) . ' falló en exportarse.';
+            $body .= ' '.number_format($failedRowsCount).' '.str('fila')->plural($failedRowsCount).' falló en exportarse.';
         }
 
         return $body;
@@ -42,6 +42,6 @@ class CustomerExporter extends Exporter
 
     public function getFileName(Export $export): string
     {
-        return 'clientes-' . now()->format('Y-m-d-H-i-s') . '.xlsx';
+        return 'clientes-'.now()->format('Y-m-d-H-i-s').'.xlsx';
     }
 }

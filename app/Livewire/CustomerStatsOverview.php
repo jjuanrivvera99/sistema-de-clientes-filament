@@ -3,8 +3,8 @@
 namespace App\Livewire;
 
 use App\Models\Customer;
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class CustomerStatsOverview extends BaseWidget
 {

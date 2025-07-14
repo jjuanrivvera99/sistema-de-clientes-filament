@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Parallax\FilamentComments\Models\Traits\HasFilamentComments;
 
 /**
@@ -27,7 +27,7 @@ use Parallax\FilamentComments\Models\Traits\HasFilamentComments;
  */
 class Customer extends Model
 {
-    use HasFactory, SoftDeletes, HasFilamentComments;
+    use HasFactory, HasFilamentComments, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -45,7 +45,7 @@ class Customer extends Model
         'document_number',
         'document_type_id',
         'unique',
-        'notes'
+        'notes',
     ];
 
     /**

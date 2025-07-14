@@ -2,19 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use App\Models\User;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\UserResource\RelationManagers;
-use App\Filament\Resources\UserResource\Pages\{CreateUser, EditUser};
+use App\Filament\Resources\UserResource\Pages\CreateUser;
+use App\Filament\Resources\UserResource\Pages\EditUser;
+use App\Models\User;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserResource extends Resource
 {
@@ -71,7 +69,7 @@ class UserResource extends Resource
                             ->required(),
                     ])
                     ->collapsible()
-                    ->collapsed(fn ($livewire) => !$livewire?->record?->exists),
+                    ->collapsed(fn ($livewire) => ! $livewire?->record?->exists),
 
                 Forms\Components\Section::make('Reseteo de Contraseña')
                     ->schema([
@@ -82,7 +80,7 @@ class UserResource extends Resource
                             ->maxLength(255)
                             ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                             ->nullable(),
-                            
+
                         Forms\Components\TextInput::make('new_password_confirmation')
                             ->label('Confirmar Nueva Contraseña')
                             ->password()
@@ -91,7 +89,7 @@ class UserResource extends Resource
                     ])
                     ->hidden(fn ($livewire) => $livewire instanceof CreateUser)
                     ->collapsible()
-                    ->collapsed(fn ($livewire) => !$livewire?->record?->exists),
+                    ->collapsed(fn ($livewire) => ! $livewire?->record?->exists),
             ]);
     }
 

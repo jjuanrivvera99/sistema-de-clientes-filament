@@ -29,7 +29,6 @@ final class CustomerControllerTest extends TestCase
         $response->assertViewHas('customers');
     }
 
-
     #[Test]
     public function create_displays_view(): void
     {
@@ -38,7 +37,6 @@ final class CustomerControllerTest extends TestCase
         $response->assertOk();
         $response->assertViewIs('customers.create');
     }
-
 
     #[Test]
     public function store_uses_form_request_validation(): void
@@ -74,7 +72,6 @@ final class CustomerControllerTest extends TestCase
         $response->assertRedirect(route('customers.index'));
     }
 
-
     #[Test]
     public function show_displays_view(): void
     {
@@ -87,7 +84,6 @@ final class CustomerControllerTest extends TestCase
         $response->assertViewHas('customer');
     }
 
-
     #[Test]
     public function edit_displays_view(): void
     {
@@ -99,7 +95,6 @@ final class CustomerControllerTest extends TestCase
         $response->assertViewIs('customers.edit');
         $response->assertViewHas('customer');
     }
-
 
     #[Test]
     public function update_uses_form_request_validation(): void
@@ -133,7 +128,6 @@ final class CustomerControllerTest extends TestCase
         $this->assertEquals($document_number, $customer->document_number);
         $this->assertEquals($document_type->id, $customer->document_type_id);
     }
-
 
     #[Test]
     public function destroy_deletes_and_redirects(): void

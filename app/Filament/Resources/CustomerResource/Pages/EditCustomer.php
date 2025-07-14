@@ -2,10 +2,9 @@
 
 namespace App\Filament\Resources\CustomerResource\Pages;
 
-use Filament\Actions;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Resources\Pages\EditRecord;
 use App\Filament\Resources\CustomerResource;
+use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 use Parallax\FilamentComments\Actions\CommentsAction;
 
 class EditCustomer extends EditRecord
@@ -14,7 +13,9 @@ class EditCustomer extends EditRecord
 
     public function getRecord(): Model
     {
-        $this->record = $this->getModel()::with('membership')->findOrFail($this->record->id);
+        if ($this->record instanceof Model) {
+            $this->record = $this->getModel()::with('membership')->findOrFail($this->record->id);
+        }
 
         return $this->record;
     }

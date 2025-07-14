@@ -3,10 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Customer;
-use Faker\Factory as Faker;
 use App\Models\DocumentType;
+use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class CustomerSeeder extends Seeder
 {
