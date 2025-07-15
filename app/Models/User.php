@@ -14,7 +14,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements HasAvatar, MustVerifyEmail
 {
     use HasFactory, HasRoles, Notifiable;
-    
+
     // Conditionally use HasPanelShield trait methods
     use HasPanelShield {
         HasPanelShield::canAccessPanel as protected shieldCanAccessPanel;
@@ -27,7 +27,7 @@ class User extends Authenticatable implements HasAvatar, MustVerifyEmail
         if (env('DISABLE_SHIELD_TRAIT', false)) {
             return;
         }
-        
+
         static::originalBootHasPanelShield();
     }
 
@@ -37,7 +37,7 @@ class User extends Authenticatable implements HasAvatar, MustVerifyEmail
         if (env('DISABLE_SHIELD_TRAIT', false)) {
             return true;
         }
-        
+
         return $this->shieldCanAccessPanel($panel);
     }
 
