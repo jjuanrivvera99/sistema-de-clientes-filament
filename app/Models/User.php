@@ -24,7 +24,7 @@ class User extends Authenticatable implements HasAvatar, MustVerifyEmail
     protected static function bootHasPanelShield(): void
     {
         // Skip booting Shield in CI/testing environment
-        if (env('DISABLE_SHIELD_TRAIT', false)) {
+        if (config('app.disable_shield_trait', false)) {
             return;
         }
 
@@ -34,7 +34,7 @@ class User extends Authenticatable implements HasAvatar, MustVerifyEmail
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
         // Skip Shield functionality in CI/testing environment
-        if (env('DISABLE_SHIELD_TRAIT', false)) {
+        if (config('app.disable_shield_trait', false)) {
             return true;
         }
 

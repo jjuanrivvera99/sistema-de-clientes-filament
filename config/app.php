@@ -29,6 +29,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Disable Shield Trait
+    |--------------------------------------------------------------------------
+    |
+    | This value determines whether the HasPanelShield trait should be disabled.
+    | This is useful in CI/testing environments where the roles table may not
+    | be available during composer install.
+    |
+    */
+
+    'disable_shield_trait' => env('DISABLE_SHIELD_TRAIT', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |
