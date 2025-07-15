@@ -39,8 +39,20 @@ jobs:
           echo "DB_CONNECTION=sqlite" >> .env
           echo "DB_DATABASE=$(pwd)/database/database.sqlite" >> .env
 
-      - name: Install Composer dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
+      - name: Install Composer dependencies (without scripts)
+        run: composer install --no-progress --prefer-dist --optimize-autoloader --no-scripts
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Run database migrations
+        run: php artisan migrate --force
+
+      - name: Install Shield with fresh setup
+        run: php artisan shield:install --fresh --minimal
+
+      - name: Complete Composer setup
+        run: php artisan package:discover --ansi
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -54,19 +66,11 @@ jobs:
       - name: Build assets
         run: npm run build
 
-      - name: Generate application key
-        run: php artisan key:generate
-
       - name: Code Style Check (Laravel Pint)
         run: ./vendor/bin/pint --test
 
       - name: Static Analysis (PHPStan)
         run: ./vendor/bin/phpstan analyse --no-progress
-
-      - name: Setup Test Database and Migrations
-        run: |
-          php artisan shield:install --fresh --minimal
-          php artisan migrate --force
           
       - name: Run Tests
         run: php artisan test --coverage-text --coverage-clover=coverage.xml
@@ -99,7 +103,7 @@ jobs:
           php-version: 8.3
           extensions: mbstring, dom, fileinfo, sqlite3
 
-      - name: Setup environment and database
+      - name: Setup environment and database  
         run: |
           cp .env.example .env
           mkdir -p database
@@ -108,8 +112,15 @@ jobs:
           echo "DB_CONNECTION=sqlite" >> .env
           echo "DB_DATABASE=$(pwd)/database/database.sqlite" >> .env
 
-      - name: Install dependencies
-        run: composer install --no-dev --optimize-autoloader
+      - name: Install dependencies (without scripts)
+        run: composer install --no-dev --optimize-autoloader --no-scripts
+
+      - name: Setup database and complete installation
+        run: |
+          php artisan key:generate
+          php artisan migrate --force
+          php artisan shield:install --fresh --minimal
+          php artisan package:discover --ansi
 
       - name: Check deployment readiness
         run: |

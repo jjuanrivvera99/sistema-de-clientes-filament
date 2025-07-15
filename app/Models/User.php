@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use BezhanSalleh\FilamentShield\Traits\HasPanelShield; // Temporarily disabled for CI
+use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,8 +13,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasAvatar, MustVerifyEmail
 {
-    use HasFactory, HasRoles, Notifiable;
-    // Note: HasPanelShield temporarily disabled for CI compatibility
+    use HasFactory, HasPanelShield, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
