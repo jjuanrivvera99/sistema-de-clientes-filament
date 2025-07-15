@@ -13,7 +13,8 @@ class RegistrationTest extends TestCase
     {
         $response = $this->get('/register');
 
-        $response->assertStatus(200);
+        // Registration not available in Filament admin - expect 404
+        $response->assertStatus(404);
     }
 
     public function test_new_users_can_register(): void
@@ -25,7 +26,7 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        // Registration not available in Filament admin - expect 404
+        $response->assertStatus(404);
     }
 }

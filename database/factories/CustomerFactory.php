@@ -25,7 +25,7 @@ class CustomerFactory extends Factory
             'nationality' => $this->faker->word(),
             'residence_place' => $this->faker->word(),
             'postal_code' => $this->faker->postcode(),
-            'approx_enrollment' => $this->faker->date(),
+            'cencus' => $this->faker->date(),
             'marital_status' => $this->faker->word(),
             'family' => $this->faker->text(),
             'document_number' => $this->faker->word(),
