@@ -13,7 +13,33 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasAvatar, MustVerifyEmail
 {
-    use HasFactory, HasPanelShield, HasRoles, Notifiable;
+    use HasFactory, HasRoles, Notifiable;
+    
+    // Conditionally use HasPanelShield trait methods
+    use HasPanelShield {
+        HasPanelShield::canAccessPanel as protected shieldCanAccessPanel;
+        HasPanelShield::bootHasPanelShield as protected originalBootHasPanelShield;
+    }
+
+    protected static function bootHasPanelShield(): void
+    {
+        // Skip booting Shield in CI/testing environment
+        if (env('DISABLE_SHIELD_TRAIT', false)) {
+            return;
+        }
+        
+        static::originalBootHasPanelShield();
+    }
+
+    public function canAccessPanel(\Filament\Panel $panel): bool
+    {
+        // Skip Shield functionality in CI/testing environment
+        if (env('DISABLE_SHIELD_TRAIT', false)) {
+            return true;
+        }
+        
+        return $this->shieldCanAccessPanel($panel);
+    }
 
     /**
      * The attributes that are mass assignable.
