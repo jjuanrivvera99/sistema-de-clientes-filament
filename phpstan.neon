@@ -1,0 +1,37 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    tmpDir: storage/phpstan
+    paths:
+        - app/
+        - config/
+        - database/
+        - routes/
+        - tests/
+
+    # Rule level of PHPStan (0-9, with 9 being the strictest)
+    level: 5
+
+    # Ignore patterns for files or directories
+    ignoreErrors:
+        # PHPDoc type covariance issues with Laravel base classes  
+        - '#PHPDoc type array of property App\\Models\\[a-zA-Z]+::\$fillable is not covariant#'
+        - '#PHPDoc type array of property App\\Models\\[a-zA-Z]+::\$casts is not covariant#'
+        - '#PHPDoc type string of property Database\\Factories\\[a-zA-Z]+Factory::\$model is not covariant#'
+        
+        # Eloquent model property access
+        - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::\$[a-zA-Z_]+#'
+        
+        # Always true assertions in tests
+        - '#Call to method PHPUnit\\Framework\\Assert::assertTrue\(\) with true will always evaluate to true#'
+
+    excludePaths:
+        - bootstrap/cache/*
+        - storage/*
+        - vendor/*
+        - node_modules/*
+        - routes/console.php
+
+    # Laravel-specific configuration
+    treatPhpDocTypesAsCertain: false

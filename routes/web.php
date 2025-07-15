@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/admin');
 Route::redirect('/dashboard', '/admin')->middleware(['auth', 'verified'])->name('dashboard');

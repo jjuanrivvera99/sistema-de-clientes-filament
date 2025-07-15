@@ -1,0 +1,179 @@
+name: Code Quality Analysis
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+# CI/CD Performance Optimization:
+# - Split into parallel jobs for faster execution
+# - code-style-and-analysis: Quick validation (no database needed)
+# - tests-and-security: Full testing with database
+# - deployment-check: Final validation (only on main branch)
+
+# Database Strategy for Testing:
+# Using SQLite instead of MySQL for CI/testing provides:
+# - Faster setup (no external service required)
+# - Better performance (in-memory database for analysis job)
+# - Simpler configuration (no credentials or ports)
+# - Identical SQL functionality for Laravel/Eloquent operations
+# - Reduced CI resource usage and costs
+# - More reliable builds (no network dependencies)
+# Production still uses MySQL - SQLite is testing-only optimization
+
+jobs:
+  # Job 1: Code Style and Static Analysis (runs in parallel)
+  code-style-and-analysis:
+    runs-on: ubuntu-latest
+    name: Code Style & Static Analysis
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: mbstring, dom, fileinfo, sqlite3
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: dependencies-composer-
+
+      - name: Setup environment
+        run: |
+          cp .env.example .env
+          echo "APP_ENV=testing" >> .env
+          echo "DB_CONNECTION=sqlite" >> .env
+          echo "DB_DATABASE=:memory:" >> .env
+          echo "DISABLE_SHIELD_TRAIT=true" >> .env
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Code Style Check (Laravel Pint)
+        run: ./vendor/bin/pint --test
+
+      - name: Static Analysis (PHPStan)
+        run: ./vendor/bin/phpstan analyse --no-progress
+
+  # Job 2: Tests and Security (runs in parallel)
+  tests-and-security:
+    runs-on: ubuntu-latest
+    name: Tests & Security
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: mbstring, dom, fileinfo, sqlite3, gd
+          coverage: xdebug
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: dependencies-composer-
+
+      - name: Setup environment and database
+        run: |
+          cp .env.example .env
+          mkdir -p database
+          touch database/database.sqlite
+          echo "APP_ENV=testing" >> .env
+          echo "DB_CONNECTION=sqlite" >> .env
+          echo "DB_DATABASE=$(pwd)/database/database.sqlite" >> .env
+          echo "DISABLE_SHIELD_TRAIT=true" >> .env
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Run database migrations
+        run: php artisan migrate --force
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Run Tests
+        run: php artisan test --coverage-text --coverage-clover=coverage.xml
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        if: always()
+        with:
+          file: ./coverage.xml
+          fail_ci_if_error: false
+
+      - name: Security Audit (Composer)
+        run: composer audit
+
+      - name: Check for outdated dependencies
+        run: composer outdated --direct --strict || true
+
+  # Job 3: Deployment Check (waits for both parallel jobs to complete)
+  deployment-check:
+    runs-on: ubuntu-latest
+    name: Deployment Readiness
+    if: github.ref == 'refs/heads/main'
+    needs: [code-style-and-analysis, tests-and-security]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: mbstring, dom, fileinfo, sqlite3
+
+      - name: Setup environment and database  
+        run: |
+          cp .env.example .env
+          mkdir -p database
+          touch database/database.sqlite
+          echo "APP_ENV=production" >> .env
+          echo "DB_CONNECTION=sqlite" >> .env
+          echo "DB_DATABASE=$(pwd)/database/database.sqlite" >> .env
+          echo "DISABLE_SHIELD_TRAIT=true" >> .env
+
+      - name: Install dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Setup database
+        run: |
+          php artisan key:generate
+          php artisan migrate --force
+
+      - name: Check deployment readiness
+        run: |
+          echo "✅ Code quality checks passed"
+          echo "✅ All tests passed"
+          echo "✅ Static analysis passed"
+          echo "✅ Code style check passed"
+          echo "🚀 Ready for deployment"

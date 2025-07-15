@@ -3,12 +3,12 @@
 namespace App\Providers;
 
 use App\Policies\ActivityPolicy;
-use Illuminate\Support\Facades\URL;
 use App\Policies\QueueMonitorPolicy;
+use Croustibat\FilamentJobsMonitor\Models\QueueMonitor;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Activitylog\Models\Activity;
-use Croustibat\FilamentJobsMonitor\Models\QueueMonitor;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,8 +27,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(Activity::class, ActivityPolicy::class);
         Gate::policy(QueueMonitor::class, QueueMonitorPolicy::class);
-    
-        if (env('FORCE_HTTPS')) {
+
+        if (config('app.force_https')) {
             URL::forceScheme('https');
         }
     }

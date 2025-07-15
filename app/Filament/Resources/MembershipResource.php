@@ -2,14 +2,14 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\Customer;
-use Filament\Forms\Form;
-use App\Models\Membership;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
 use App\Filament\Resources\MembershipResource\Pages;
+use App\Models\Customer;
+use App\Models\Membership;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
 
 class MembershipResource extends Resource
 {
@@ -18,7 +18,7 @@ class MembershipResource extends Resource
     protected static ?string $modelLabel = 'Afiliaciones';
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
-    
+
     protected static ?string $navigationLabel = 'Afiliaciones';
 
     protected static ?int $navigationSort = 4;
@@ -31,7 +31,7 @@ class MembershipResource extends Resource
                     ->label('Número de Afiliación')
                     ->nullable()
                     ->maxLength(255),
-                
+
                 Forms\Components\DatePicker::make('membership_date')
                     ->label('Fecha de Afiliación')
                     ->required(),
@@ -54,7 +54,7 @@ class MembershipResource extends Resource
                             ->pluck('name', 'id')
                             ->toArray();
                     })
-                    ->getOptionLabelUsing(fn($value): ?string => Customer::find($value)?->name)
+                    ->getOptionLabelUsing(fn ($value): ?string => Customer::find($value)?->name)
                     ->required(),
 
                 Forms\Components\Textarea::make('wish')

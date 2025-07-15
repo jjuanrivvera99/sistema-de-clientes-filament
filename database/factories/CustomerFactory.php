@@ -2,10 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Customer;
 use App\Models\DocumentType;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CustomerFactory extends Factory
 {
@@ -26,7 +25,7 @@ class CustomerFactory extends Factory
             'nationality' => $this->faker->word(),
             'residence_place' => $this->faker->word(),
             'postal_code' => $this->faker->postcode(),
-            'approx_enrollment' => $this->faker->date(),
+            'cencus' => $this->faker->date(),
             'marital_status' => $this->faker->word(),
             'family' => $this->faker->text(),
             'document_number' => $this->faker->word(),

@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
-use Illuminate\View\View;
-use App\Models\DocumentType;
-use App\Models\Contact;
-use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\DB;
 use App\Http\Requests\CustomerStoreRequest;
 use App\Http\Requests\CustomerUpdateRequest;
+use App\Models\Contact;
+use App\Models\Customer;
+use App\Models\DocumentType;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class CustomerController extends Controller
 {
@@ -46,7 +46,7 @@ class CustomerController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['error' => 'Error al crear el cliente: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Error al crear el cliente: '.$e->getMessage()]);
         }
     }
 
@@ -97,7 +97,7 @@ class CustomerController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['error' => 'Error al actualizar el cliente: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Error al actualizar el cliente: '.$e->getMessage()]);
         }
     }
 

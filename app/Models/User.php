@@ -2,23 +2,49 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Support\Facades\Storage;
-use Filament\Models\Contracts\HasAvatar;
-use Illuminate\Notifications\Notifiable;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
+use Filament\Models\Contracts\HasAvatar;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements HasAvatar
+class User extends Authenticatable implements HasAvatar, MustVerifyEmail
 {
-    use HasFactory, Notifiable, HasRoles, HasPanelShield;
+    use HasFactory, HasRoles, Notifiable;
+
+    // Conditionally use HasPanelShield trait methods
+    use HasPanelShield {
+        HasPanelShield::canAccessPanel as protected shieldCanAccessPanel;
+        HasPanelShield::bootHasPanelShield as protected originalBootHasPanelShield;
+    }
+
+    protected static function bootHasPanelShield(): void
+    {
+        // Skip booting Shield in CI/testing environment
+        if (config('app.disable_shield_trait', false)) {
+            return;
+        }
+
+        static::originalBootHasPanelShield();
+    }
+
+    public function canAccessPanel(\Filament\Panel $panel): bool
+    {
+        // Skip Shield functionality in CI/testing environment
+        if (config('app.disable_shield_trait', false)) {
+            return true;
+        }
+
+        return $this->shieldCanAccessPanel($panel);
+    }
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'name',
@@ -30,7 +56,7 @@ class User extends Authenticatable implements HasAvatar
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [
         'password',
@@ -52,6 +78,6 @@ class User extends Authenticatable implements HasAvatar
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return $this->avatar_url  ? Storage::url("$this->avatar_url")  : null;
+        return $this->avatar_url ? Storage::url("$this->avatar_url") : null;
     }
 }

@@ -21,12 +21,14 @@
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "jasonmccreary/laravel-test-assertions": "^2.4",
+        "larastan/larastan": "^3.1",
         "laravel-shift/blueprint": "^2.10",
         "laravel/breeze": "^2.1",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.31",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.0",
+        "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^11.0.1"
     },
     "autoload": {
@@ -57,6 +59,12 @@
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi"
+        ],
+        "analyse": [
+            "./vendor/bin/phpstan analyse"
+        ],
+        "analyse-clear": [
+            "./vendor/bin/phpstan clear-result-cache && ./vendor/bin/phpstan analyse"
         ]
     },
     "extra": {

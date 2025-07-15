@@ -2,18 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\Customer;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Tables\Actions\ExportAction;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Exports\CustomerExporter;
 use App\Filament\Resources\CustomerResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\CustomerResource\RelationManagers;
+use App\Models\Customer;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Actions\ExportAction;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class CustomerResource extends Resource
 {
@@ -33,15 +31,15 @@ class CustomerResource extends Resource
                     ->label('Nombre')
                     ->required()
                     ->maxLength(255),
-                
+
                 Forms\Components\TextInput::make('nationality')
                     ->label('Nacionalidad')
                     ->maxLength(255),
-                
+
                 Forms\Components\TextInput::make('residence_place')
                     ->label('Lugar de Residencia')
                     ->maxLength(255),
-                
+
                 Forms\Components\TextInput::make('postal_code')
                     ->label('Código Postal')
                     ->maxLength(20),
@@ -75,11 +73,11 @@ class CustomerResource extends Resource
                         Forms\Components\TextInput::make('membership_number')
                             ->label('Número de Afiliación')
                             ->maxLength(255)
-                            ->default(fn ($record) => $record?->membership?->membership_number ?? ''),
+                            ->default(fn ($record) => $record?->membership->membership_number ?? ''),
 
                         Forms\Components\DatePicker::make('membership_date')
                             ->label('Fecha de Afiliación')
-                            ->default(fn ($record) => $record?->membership?->membership_date ?? null),
+                            ->default(fn ($record) => $record?->membership->membership_date ?? null),
 
                         Forms\Components\Select::make('membership_status')
                             ->label('Estado de Afiliación')
@@ -87,12 +85,12 @@ class CustomerResource extends Resource
                                 'active' => 'Activo',
                                 'inactive' => 'Inactivo',
                             ])
-                            ->default(fn ($record) => $record?->membership?->membership_status ?? ''),
+                            ->default(fn ($record) => $record?->membership->membership_status ?? ''),
 
                         Forms\Components\Textarea::make('wish')
                             ->label('Deseo')
                             ->maxLength(65535)
-                            ->default(fn ($record) => $record?->membership?->wish ?? ''),
+                            ->default(fn ($record) => $record?->membership->wish ?? ''),
                     ])
                     ->columns(2)
                     ->relationship('membership'),
@@ -106,7 +104,7 @@ class CustomerResource extends Resource
                         Forms\Components\TextInput::make('contact_number')
                             ->label('Número de Contacto')
                             ->maxLength(20),
-                        
+
                         Forms\Components\TextInput::make('address')
                             ->label('Dirección')
                             ->maxLength(255),

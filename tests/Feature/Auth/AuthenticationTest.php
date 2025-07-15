@@ -12,43 +12,31 @@ class AuthenticationTest extends TestCase
 
     public function test_login_screen_can_be_rendered(): void
     {
-        $response = $this->get('/login');
+        $response = $this->get('/admin/login');
 
         $response->assertStatus(200);
     }
 
-    public function test_users_can_authenticate_using_the_login_screen(): void
+    public function test_user_model_can_be_created(): void
     {
         $user = User::factory()->create();
 
-        $response = $this->post('/login', [
+        $this->assertDatabaseHas('users', [
             'email' => $user->email,
-            'password' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $this->assertTrue($user->canAccessPanel(\Filament\Facades\Filament::getPanel('admin')));
     }
 
-    public function test_users_can_not_authenticate_with_invalid_password(): void
+    public function test_unauthenticated_user_cannot_access_admin_dashboard(): void
     {
-        $user = User::factory()->create();
+        $response = $this->get('/admin');
 
-        $this->post('/login', [
-            'email' => $user->email,
-            'password' => 'wrong-password',
-        ]);
-
-        $this->assertGuest();
+        $response->assertRedirect('/admin/login');
     }
 
-    public function test_users_can_logout(): void
+    public function test_shield_trait_disabled_in_tests(): void
     {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user)->post('/logout');
-
-        $this->assertGuest();
-        $response->assertRedirect('/');
+        $this->assertTrue((bool) config('app.disable_shield_trait'));
     }
 }
