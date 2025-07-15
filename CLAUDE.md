@@ -79,6 +79,14 @@ php artisan test --coverage
 ```
 
 ### Code Quality & Static Analysis
+
+#### CI/CD Pipeline
+The project uses an optimized GitHub Actions workflow with parallel job execution:
+- **code-style-and-analysis**: Runs Laravel Pint and PHPStan in parallel (fast validation)
+- **tests-and-security**: Runs full test suite, security audit, and dependency checks
+- **deployment-check**: Final validation for main branch deployments
+
+#### Local Development Commands
 ```bash
 # Laravel Pint (code formatting)
 ./vendor/bin/sail exec laravel.test ./vendor/bin/pint
@@ -94,6 +102,35 @@ php artisan test --coverage
 
 # Run complete code quality suite
 ./vendor/bin/sail exec laravel.test ./vendor/bin/pint --test && ./vendor/bin/sail composer analyse
+```
+
+#### Git Hooks for Automated Quality Checks
+
+The project includes pre-commit hooks that automatically run code quality checks before each commit:
+
+```bash
+# Install git hooks (one-time setup)
+./hooks/install-hooks.sh
+
+# The hook will automatically run on each commit:
+# 1. Laravel Pint (code style check)
+# 2. PHPStan (static analysis)
+# 3. Auto-fix code style issues
+# 4. Re-stage modified files
+
+# To skip hooks (not recommended)
+git commit --no-verify
+
+# To manually test the hook
+.git/hooks/pre-commit
+```
+
+**Benefits of Pre-commit Hooks:**
+- Prevents committing code that doesn't meet quality standards
+- Automatically fixes code style issues
+- Catches static analysis errors early
+- Ensures consistent code quality across the team
+- Reduces CI failures due to code quality issues
 ```
 
 ### Blueprint Code Generation
@@ -126,6 +163,20 @@ php artisan blueprint:build
 - Soft deletes on Customer model
 - Foreign key constraints with cascade deletes
 - Unique constraints on document combinations
+
+### Database Configuration
+- **Production**: MySQL (configured in .env)
+- **Testing/CI**: SQLite (phpunit.xml configuration)
+
+#### Why SQLite for Testing?
+The project uses SQLite for testing and CI environments for several strategic reasons:
+- **Performance**: In-memory SQLite databases are significantly faster than MySQL for test execution
+- **Simplicity**: No external service setup required in CI environments
+- **Reliability**: No network dependencies that could cause flaky tests
+- **Cost Efficiency**: Reduced CI resource usage and execution time
+- **Compatibility**: Laravel/Eloquent provides identical functionality across both databases
+- **Isolation**: Each test run gets a fresh database state
+- **CI Optimization**: Parallel jobs can use in-memory databases without conflicts
 
 ### Key Tables
 - `customers`: Core customer data with soft deletes

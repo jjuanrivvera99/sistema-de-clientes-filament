@@ -207,6 +207,70 @@ The project uses Laravel Blueprint for rapid code generation:
 ./vendor/bin/sail test --testsuite=Unit
 ```
 
+## 🎯 Code Quality
+
+This project enforces high code quality standards through automated tools and workflows.
+
+### Static Analysis & Code Style
+
+```bash
+# Laravel Pint (code formatting)
+./vendor/bin/sail exec laravel.test ./vendor/bin/pint
+
+# Check formatting without fixing
+./vendor/bin/sail exec laravel.test ./vendor/bin/pint --test
+
+# PHPStan (static analysis)
+./vendor/bin/sail exec laravel.test ./vendor/bin/phpstan analyse
+
+# Security audit
+./vendor/bin/sail composer audit
+```
+
+### Git Hooks for Automated Quality Checks
+
+The project includes pre-commit hooks that automatically run quality checks before each commit:
+
+```bash
+# Install git hooks (one-time setup)
+./hooks/install-hooks.sh
+```
+
+**What the pre-commit hook does:**
+1. **Code Style Check**: Runs Laravel Pint to verify formatting
+2. **Static Analysis**: Executes PHPStan to catch potential bugs
+3. **Auto-fix**: Automatically fixes code style issues
+4. **Re-stage**: Adds fixed files back to the commit
+
+**Benefits:**
+- ✅ Prevents commits that don't meet quality standards
+- ✅ Automatically fixes code style issues
+- ✅ Catches static analysis errors early
+- ✅ Ensures consistent code quality across the team
+- ✅ Reduces CI failures due to code quality issues
+
+**Usage:**
+```bash
+# Normal commit (hook runs automatically)
+git commit -m "Add new feature"
+
+# Skip hooks if needed (not recommended)
+git commit --no-verify -m "Emergency fix"
+
+# Test the hook manually
+.git/hooks/pre-commit
+```
+
+### CI/CD Pipeline
+
+The project uses GitHub Actions with parallel job execution for optimal performance:
+
+- **code-style-and-analysis**: Fast validation with Laravel Pint and PHPStan
+- **tests-and-security**: Full test suite with security audits
+- **deployment-check**: Production readiness validation (main branch only)
+
+All code must pass these quality gates before being merged.
+
 ## 🎯 Project Structure
 
 ```

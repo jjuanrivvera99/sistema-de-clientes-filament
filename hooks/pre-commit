@@ -1,0 +1,89 @@
+#!/bin/bash
+
+# Pre-commit hook for Laravel with PHPStan and Pint
+# This hook runs automatically before each commit to ensure code quality
+
+set -e
+
+echo "🔍 Running pre-commit checks..."
+
+# Check if we're in a Laravel project
+if [ ! -f "artisan" ]; then
+    echo "❌ Error: This doesn't appear to be a Laravel project (artisan not found)"
+    exit 1
+fi
+
+# Check if Sail is available
+if [ -f "vendor/bin/sail" ]; then
+    SAIL_CMD="./vendor/bin/sail"
+    PHP_CMD="$SAIL_CMD exec laravel.test"
+else
+    SAIL_CMD=""
+    PHP_CMD="php"
+fi
+
+# Function to run commands with proper error handling
+run_check() {
+    local check_name="$1"
+    local command="$2"
+    
+    echo "  🔄 Running $check_name..."
+    
+    if eval "$command"; then
+        echo "  ✅ $check_name passed"
+    else
+        echo "  ❌ $check_name failed"
+        return 1
+    fi
+}
+
+# Get list of staged PHP files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(php)$' || true)
+
+if [ -z "$STAGED_FILES" ]; then
+    echo "  ℹ️  No PHP files staged for commit"
+    exit 0
+fi
+
+echo "  📁 Found staged PHP files:"
+echo "$STAGED_FILES" | sed 's/^/    - /'
+
+# 1. Laravel Pint (Code Style)
+echo ""
+echo "1️⃣ Code Style Check (Laravel Pint)"
+if [ -n "$SAIL_CMD" ]; then
+    run_check "Laravel Pint" "$SAIL_CMD pint --test"
+else
+    run_check "Laravel Pint" "./vendor/bin/pint --test"
+fi
+
+# 2. PHPStan (Static Analysis)
+echo ""
+echo "2️⃣ Static Analysis (PHPStan)"
+if [ -n "$SAIL_CMD" ]; then
+    run_check "PHPStan" "$PHP_CMD ./vendor/bin/phpstan analyse --no-progress"
+else
+    run_check "PHPStan" "./vendor/bin/phpstan analyse --no-progress"
+fi
+
+# 3. Optional: Fix code style issues automatically
+echo ""
+echo "3️⃣ Auto-fixing code style issues..."
+if [ -n "$SAIL_CMD" ]; then
+    echo "  🔧 Running Laravel Pint to fix issues..."
+    $SAIL_CMD pint --quiet
+else
+    echo "  🔧 Running Laravel Pint to fix issues..."
+    ./vendor/bin/pint --quiet
+fi
+
+# Re-stage files that were modified by Pint
+for file in $STAGED_FILES; do
+    if [ -f "$file" ]; then
+        git add "$file"
+    fi
+done
+
+echo ""
+echo "✅ All pre-commit checks passed!"
+echo "🚀 Proceeding with commit..."
