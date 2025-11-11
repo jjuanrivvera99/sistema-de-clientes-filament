@@ -78,13 +78,14 @@ class UserResource extends Resource
                             ->password()
                             ->minLength(8)
                             ->maxLength(255)
-                            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                            ->dehydrated(false)
                             ->nullable(),
 
                         Forms\Components\TextInput::make('new_password_confirmation')
                             ->label('Confirmar Nueva Contraseña')
                             ->password()
                             ->same('new_password')
+                            ->dehydrated(false)
                             ->nullable(),
                     ])
                     ->hidden(fn ($livewire) => $livewire instanceof CreateUser)
