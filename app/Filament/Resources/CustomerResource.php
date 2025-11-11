@@ -54,12 +54,25 @@ class CustomerResource extends Resource
                 Forms\Components\Select::make('document_type_id')
                     ->label('Tipo de Documento')
                     ->relationship('documentType', 'name')
-                    ->required(),
+                    ->required()
+                    ->reactive()
+                    ->afterStateUpdated(fn ($_, callable $set) => $set('document_number', null)),
 
                 Forms\Components\TextInput::make('document_number')
                     ->label('Número de Documento')
                     ->required()
-                    ->maxLength(50),
+                    ->maxLength(50)
+                    ->unique(
+                        table: Customer::class,
+                        column: 'document_number',
+                        ignoreRecord: true,
+                        modifyRuleUsing: function ($rule, callable $get) {
+                            return $rule->where('document_type_id', $get('document_type_id'));
+                        }
+                    )
+                    ->validationMessages([
+                        'unique' => 'Ya existe un cliente con este tipo y número de documento.',
+                    ]),
 
                 Forms\Components\Textarea::make('family')
                     ->label('Familia'),
