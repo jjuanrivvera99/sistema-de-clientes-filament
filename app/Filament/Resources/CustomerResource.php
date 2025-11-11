@@ -56,7 +56,7 @@ class CustomerResource extends Resource
                     ->relationship('documentType', 'name')
                     ->required()
                     ->reactive()
-                    ->afterStateUpdated(fn ($_, callable $set) => $set('document_number', null)),
+                    ->afterStateUpdated(fn (callable $set) => $set('document_number', null)),
 
                 Forms\Components\TextInput::make('document_number')
                     ->label('Número de Documento')
